@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-     <title>React App</title>
-</head>
-<body>
-    
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>My Library</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
     <div id="root"></div>
-    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
-    <script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
       class Book {
         constructor(title, author) {
           this.title = title;
@@ -49,30 +49,67 @@
         new Film("Mission Impossible", "Adventure", " Hi-octane stunt fest"),
       ];
 
-      const bookList = React.createElement(
-        "ul",
-        null,
-        books.map((b, i) =>
-          React.createElement("li", { key: i, title: b.toString() }, b.title)
-        )
-      );
+      function ItemsList(props) {
+        const ListTag = props.ordered ? "ol" : "ul";
+        return (
+          <ListTag>
+            {props.items.map((item, i) => (
+              <li key={i}>{item.toString()} </li>
+            ))}
+          </ListTag>
+        );
+      }
 
-      const filmList = React.createElement(
-        "ul",
-        null,
-        films.map((f, i) =>
-          React.createElement("li", { key: i, title: f.toString() }, f.name)
-        )
-      );
+      function Table(props) {
+        return (
+          <table>
+            <TableHead sampleObject={props.items[0]} />
+            <TableBody objects={props.items} />
+          </table>
+        );
+      }
 
-      const library = React.createElement(
-        "div",
-        null,
-        React.createElement("h1", null, "My Library"),
-        React.createElement("h2", null, "Books"),
-        bookList,
-        React.createElement("h2", null, "Films"),
-        filmList
+      function TableHead(props) {
+        return (
+          <thead>
+            <TableRow data={Object.keys(props.sampleObject)} head={true} />
+          </thead>
+        );
+      }
+
+      function TableBody(props) {
+        return (
+          <tbody>
+            {props.objects.map((obj, i) => (
+              <TableRow key={i} data={Object.values(obj)} head={false} />
+            ))}
+          </tbody>
+        );
+      }
+
+      function TableRow(props) {
+        const CellTag = props.head ? "th" : "td";
+        return (
+          <tr>
+            {props.data.map((d, i) => (
+              <CellTag key={i}>{d}</CellTag>
+            ))}
+          </tr>
+        );
+      }
+
+      const library = (
+        <div>
+          <h1>My Library</h1>
+          <h2>Books list</h2>
+          <ItemsList items={books} ordered={true} />
+          <h2>Films list</h2>
+          <ItemsList items={films} ordered={true} />
+          <h2>Books table</h2>
+          <Table items={books} />
+          <h2>Films table</h2>
+          <Table items={films} />
+        </div>
       );
 
       ReactDOM.render(library, document.getElementById("root"));
